@@ -470,7 +470,21 @@
     var gl = calcElevationGainLoss(trip);
     trip.elevationGain = gl.gain;
 
-    // switch to map first so panels render in visible view
+    // set route active state immediately
+    routeMode = "routing";
+    updateMode();
+    routeStartTime = Date.now();
+    routeElapsed = 0;
+
+    // show panels immediately so timer/buttons are visible
+    showRoutePanel(trip);
+    showRouteActive();
+    document.getElementById("timeline-bar").style.display = "flex";
+    document.getElementById("elevation-panel").style.display = "block";
+    drawElevationProfile(trip, 0);
+    document.getElementById("rp-time").textContent = "0:00";
+
+    // switch to map
     if (currentView !== "map") switchView("map");
 
     // load route on map
@@ -479,19 +493,7 @@
     gpxLayer.addLayer(route);
     map.fitBounds(route.getBounds(), { padding: [40, 40] });
 
-    // show panels (map view is now visible)
-    showRoutePanel(trip);
-    showRouteActive();
-    document.getElementById("timeline-bar").style.display = "flex";
-    document.getElementById("elevation-panel").style.display = "block";
-    drawElevationProfile(trip, 0);
-
-    // start GPS tracking
-    routeMode = "routing";
-    updateMode();
-    routeStartTime = Date.now();
-    routeElapsed = 0;
-
+    // gps tracking layer
     routeGpsLayer = L.featureGroup().addTo(map);
     routeGpsMarker = L.circleMarker([0, 0], {
       radius: 8, color: "#3d5a3e", fillColor: "#5a7c5f", fillOpacity: 0.9, weight: 3,
@@ -499,6 +501,7 @@
     routeGpsPolyline = L.polyline([], { color: "#4a7bb5", weight: 4, opacity: 0.85 })
       .addTo(routeGpsLayer);
 
+    // start timer
     routeTimer = setInterval(function () {
       if (routeMode === "routing") {
         routeElapsed = Date.now() - routeStartTime;

@@ -29,14 +29,14 @@
           <button class="ob-close" id="rp-close">&times;</button>
         </div>
         <div class="ob-stats" id="rp-stats-idle">
-          <div class="ob-stat"><span class="ob-label">Distance</span><span class="ob-val" id="rp-dist">0.0 mi</span></div>
+          <div class="ob-stat"><span class="ob-label">Distance</span><span class="ob-val" id="rp-dist">0.0 km</span></div>
           <div class="ob-stat"><span class="ob-label">Elevation</span><span class="ob-val" id="rp-ele">—</span></div>
           <div class="ob-stat"><span class="ob-label">Difficulty</span><span class="ob-val" id="rp-diff">—</span></div>
         </div>
         <div class="ob-stats" id="rp-stats-active" style="display:none;">
           <div class="ob-stat"><span class="ob-label">Time</span><span class="ob-val" id="rp-time">0:00</span></div>
-          <div class="ob-stat"><span class="ob-label">Covered</span><span class="ob-val" id="rp-covered">0.0 mi</span></div>
-          <div class="ob-stat"><span class="ob-label">Remaining</span><span class="ob-val" id="rp-remaining">0.0 mi</span></div>
+          <div class="ob-stat"><span class="ob-label">Covered</span><span class="ob-val" id="rp-covered">0.0 km</span></div>
+          <div class="ob-stat"><span class="ob-label">Remaining</span><span class="ob-val" id="rp-remaining">0.0 km</span></div>
         </div>
         <div class="ob-actions" id="rp-actions-idle">
           <button class="ob-btn" id="rp-start-btn">Start Route</button>
@@ -52,7 +52,7 @@
         <div class="timeline-track"><div class="timeline-fill" id="timeline-fill"></div></div>
         <div class="timeline-info">
           <span id="timeline-progress">0%</span>
-          <span id="timeline-distance">0.0 mi</span>
+          <span id="timeline-distance">0.0 km</span>
         </div>
       </div>
 
@@ -63,8 +63,8 @@
         </div>
         <canvas class="ep-canvas" id="ep-canvas"></canvas>
         <div class="ep-info">
-          <span id="ep-elevation">0 ft</span>
-          <span id="ep-dist">0.0 mi</span>
+          <span id="ep-elevation">0 m</span>
+          <span id="ep-dist">0.0 km</span>
         </div>
       </div>
     </section>
@@ -123,7 +123,7 @@
         </div>
         <div class="do-info">
           <div class="do-info-row">
-            <div class="do-info-item"><label>Distance</label><span id="do-distance">0 mi</span></div>
+            <div class="do-info-item"><label>Distance</label><span id="do-distance">0 km</span></div>
             <div class="do-info-item"><label>Elev Gain</label><span id="do-gain">0 ft</span></div>
             <div class="do-info-item"><label>Elev Loss</label><span id="do-loss">0 ft</span></div>
           </div>
