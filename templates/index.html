@@ -4,19 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Trail Share</title>
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-    crossorigin=""
-  />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-    rel="stylesheet"
-  />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 </head>
 <body>
   <div class="status-bar">
@@ -24,47 +16,35 @@
   </div>
 
   <div class="app-content">
-    <!-- ─── Map View ─── -->
+    <!-- Map View -->
     <section id="view-map" class="view active">
       <div id="map"></div>
 
-      <div class="overlay-bottom" id="trip-info" style="display:none;">
+      <div class="overlay-bottom" id="route-panel" style="display:none;">
         <div class="ob-header">
           <div>
-            <h2 class="ob-title" id="info-title">Trip Name</h2>
-            <span class="ob-badge" id="info-activity">Hiking</span>
+            <h2 class="ob-title" id="rp-title">Route</h2>
+            <span class="ob-badge" id="rp-activity">Hiking</span>
           </div>
-          <button class="ob-close" id="info-close">&times;</button>
+          <button class="ob-close" id="rp-close">&times;</button>
         </div>
-        <div class="ob-stats">
-          <div class="ob-stat"><span class="ob-label">Distance</span><span class="ob-val" id="info-dist">0.0 mi</span></div>
-          <div class="ob-stat"><span class="ob-label">Duration</span><span class="ob-val" id="info-dur">—</span></div>
-          <div class="ob-stat"><span class="ob-label">Elevation</span><span class="ob-val" id="info-ele">—</span></div>
+        <div class="ob-stats" id="rp-stats-idle">
+          <div class="ob-stat"><span class="ob-label">Distance</span><span class="ob-val" id="rp-dist">0.0 mi</span></div>
+          <div class="ob-stat"><span class="ob-label">Elevation</span><span class="ob-val" id="rp-ele">—</span></div>
+          <div class="ob-stat"><span class="ob-label">Difficulty</span><span class="ob-val" id="rp-diff">—</span></div>
         </div>
-        <div class="ob-actions">
-          <button class="ob-btn" id="info-start-route">Start Route</button>
-          <button class="ob-btn ob-btn-danger" id="info-delete">Delete</button>
+        <div class="ob-stats" id="rp-stats-active" style="display:none;">
+          <div class="ob-stat"><span class="ob-label">Time</span><span class="ob-val" id="rp-time">0:00</span></div>
+          <div class="ob-stat"><span class="ob-label">Covered</span><span class="ob-val" id="rp-covered">0.0 mi</span></div>
+          <div class="ob-stat"><span class="ob-label">Remaining</span><span class="ob-val" id="rp-remaining">0.0 mi</span></div>
         </div>
-      </div>
-
-      <div class="overlay-bottom" id="sim-panel" style="display:none;">
-        <div class="ob-header"><h2 class="ob-title">Simulating Route</h2></div>
-        <div class="sim-progress-row">
-          <div class="sim-progress-track"><div class="sim-progress-fill" id="sim-progress-fill"></div></div>
+        <div class="ob-actions" id="rp-actions-idle">
+          <button class="ob-btn" id="rp-start-btn">Start Route</button>
+          <button class="ob-btn ob-btn-danger" id="rp-delete-btn">Delete</button>
         </div>
-        <div class="ob-stats">
-          <div class="ob-stat"><span class="ob-label">Covered</span><span class="ob-val" id="sim-covered">0.0 mi</span></div>
-          <div class="ob-stat"><span class="ob-label">Remaining</span><span class="ob-val" id="sim-remaining">0.0 mi</span></div>
-          <div class="ob-stat"><span class="ob-label">Progress</span><span class="ob-val" id="sim-progress">0%</span></div>
-        </div>
-        <div class="ob-actions"><button class="ob-btn ob-btn-danger" id="stop-sim-btn">Stop</button></div>
-      </div>
-
-      <div class="tracking-card" id="tracking-card" style="display:none;">
-        <div class="tc-row">
-          <div class="tc-item"><span class="tc-label">Dist</span><span class="tc-val" id="tc-dist">0.0 mi</span></div>
-          <div class="tc-item"><span class="tc-label">Time</span><span class="tc-val" id="tc-time">0:00</span></div>
-          <div class="tc-item"><span class="tc-label">Speed</span><span class="tc-val" id="tc-speed">—</span></div>
+        <div class="ob-actions" id="rp-actions-active" style="display:none;">
+          <button class="ob-btn ob-btn-danger" id="rp-stop-btn">Stop</button>
+          <button class="ob-btn" id="rp-end-btn">End Route</button>
         </div>
       </div>
 
@@ -75,9 +55,6 @@
           <span id="timeline-distance">0.0 mi</span>
         </div>
       </div>
-
-      <button class="fab" id="fab-btn">Start GPS Tracking</button>
-      <button class="fab fab-stop" id="fab-stop" style="display:none;">Stop</button>
 
       <div class="elevation-panel" id="elevation-panel" style="display:none;">
         <div class="ep-header">
@@ -92,20 +69,7 @@
       </div>
     </section>
 
-    <!-- ─── Explore View ─── -->
-    <section id="view-explore" class="view">
-      <div class="vh">
-        <h1 class="vh-title">Explore</h1>
-        <input type="text" class="vh-search" id="explore-search" placeholder="Search trails..." />
-        <div class="vh-filters">
-          <button class="filter-btn active" data-filter="hiking">Hiking</button>
-          <button class="filter-btn" data-filter="biking">Biking</button>
-        </div>
-      </div>
-      <div class="feed" id="explore-feed"></div>
-    </section>
-
-    <!-- ─── Upload View ─── -->
+    <!-- Upload View -->
     <section id="view-upload" class="view">
       <div class="vh"><h1 class="vh-title">Upload GPX</h1></div>
       <div class="upload-content">
@@ -131,30 +95,7 @@
       </div>
     </section>
 
-    <!-- Trip Detail Overlay -->
-    <div class="detail-overlay hidden" id="detail-overlay">
-      <div class="do-scroll">
-        <div class="do-header">
-          <button class="do-back" id="do-back">&larr; Back</button>
-          <div class="do-header-text">
-            <h2 id="do-title"></h2>
-            <span class="badge" id="do-badge"></span>
-          </div>
-        </div>
-        <div class="do-stats">
-          <div class="do-stat"><span class="do-val" id="do-distance">0</span><label>Distance</label></div>
-          <div class="do-stat"><span class="do-val" id="do-duration">0m</span><label>Duration</label></div>
-          <div class="do-stat"><span class="do-val" id="do-speed">0</span><label>Speed</label></div>
-        </div>
-        <div class="do-map-wrap"><div id="do-map" class="do-map"></div></div>
-        <div class="do-actions">
-          <button class="btn-primary" id="do-start">Start This Trip</button>
-          <button class="btn-danger" id="do-delete">Delete Trip</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- ─── Trips View ─── -->
+    <!-- Trips View -->
     <section id="view-trips" class="view">
       <div class="vh">
         <h1 class="vh-title">My Trips</h1>
@@ -166,16 +107,75 @@
       </div>
       <div class="feed" id="trips-feed"></div>
     </section>
+
+    <!-- Trip Detail Panel (click trip card) -->
+    <div class="detail-overlay hidden" id="detail-overlay">
+      <div class="do-scroll">
+        <div class="do-header">
+          <button class="do-back" id="do-back">&larr; Back</button>
+          <div class="do-header-text">
+            <h2 id="do-title"></h2>
+            <span class="badge" id="do-badge"></span>
+          </div>
+        </div>
+        <div class="do-map-sm" id="do-map-sm">
+          <div class="do-map-sm-inner" id="do-map-sm-inner"></div>
+        </div>
+        <div class="do-info">
+          <div class="do-info-row">
+            <div class="do-info-item"><label>Distance</label><span id="do-distance">0 mi</span></div>
+            <div class="do-info-item"><label>Elev Gain</label><span id="do-gain">0 ft</span></div>
+            <div class="do-info-item"><label>Elev Loss</label><span id="do-loss">0 ft</span></div>
+          </div>
+          <div class="do-diff" id="do-diff">Easy</div>
+        </div>
+        <div class="do-actions">
+          <button class="btn-primary" id="do-start">Start Route</button>
+          <button class="btn-danger" id="do-delete">Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Map Expand Overlay (click mini map in detail) -->
+    <div class="detail-overlay hidden" id="map-expand-overlay">
+      <div class="me-header">
+        <button class="me-back" id="me-back">&larr; Back</button>
+      </div>
+      <div class="me-map" id="me-map"></div>
+    </div>
+
+    <!-- Route End Summary Modal -->
+    <div class="modal-overlay" id="end-modal" style="display:none;">
+      <div class="modal-card">
+        <h3 class="modal-title">Route Complete!</h3>
+        <div class="end-stats">
+          <div class="end-stat"><span class="end-val" id="end-distance">0.0 mi</span><label>Distance</label></div>
+          <div class="end-stat"><span class="end-val" id="end-time">0:00</span><label>Time</label></div>
+          <div class="end-stat"><span class="end-val" id="end-pace">—</span><label>Pace</label></div>
+        </div>
+        <div class="modal-actions">
+          <button class="modal-btn modal-save" id="end-ok-btn">Done</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal-overlay" id="delete-modal" style="display:none;">
+      <div class="modal-card">
+        <h3 class="modal-title">Delete this trip?</h3>
+        <p class="modal-text">This cannot be undone.</p>
+        <div class="modal-actions">
+          <button class="modal-btn modal-save" id="modal-delete-confirm-btn">Delete</button>
+          <button class="modal-btn modal-cancel" id="modal-delete-cancel-btn">Cancel</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <nav class="bottom-nav">
     <button class="nav-tab active" data-view="map">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       <span>Map</span>
-    </button>
-    <button class="nav-tab" data-view="explore">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
-      <span>Explore</span>
     </button>
     <button class="nav-tab" data-view="upload">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
@@ -187,37 +187,7 @@
     </button>
   </nav>
 
-  <div class="modal-overlay" id="save-modal" style="display:none;">
-    <div class="modal-card">
-      <h3 class="modal-title">Save this trip?</h3>
-      <input type="text" class="modal-input" id="modal-trip-name" placeholder="Trip name" />
-      <div class="modal-activity">
-        <label class="modal-radio"><input type="radio" name="gps-activity" value="hiking" checked /><span>Hiking</span></label>
-        <label class="modal-radio"><input type="radio" name="gps-activity" value="biking" /><span>Biking</span></label>
-      </div>
-      <div class="modal-actions">
-        <button class="modal-btn modal-save" id="modal-save-btn">Save</button>
-        <button class="modal-btn modal-cancel" id="modal-cancel-btn">Cancel</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal-overlay" id="delete-modal" style="display:none;">
-    <div class="modal-card">
-      <h3 class="modal-title">Delete this trip?</h3>
-      <p class="modal-text">This cannot be undone.</p>
-      <div class="modal-actions">
-        <button class="modal-btn modal-save" id="modal-delete-confirm-btn">Delete</button>
-        <button class="modal-btn modal-cancel" id="modal-delete-cancel-btn">Cancel</button>
-      </div>
-    </div>
-  </div>
-
-  <script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-    crossorigin=""
-  ></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 # Trail Share — Anchored Summary
 
-**Goal:** Build a mobile-first trail-sharing web app: upload/record GPX tracks, view trip details, simulate routes, and track GPS in real-time.
+**Goal:** Build a mobile-first trail-sharing web app: upload GPX tracks, view trip details, start real GPS routes with live progress, and examine route terrain on an interactive map.
 
 ## Conversation History
 
@@ -24,18 +24,25 @@ Info overlay on map (title, stats, activity badge, Start Route, Delete), timelin
 ### 6. Mobile-First Refactor
 Bottom nav (Map / Explore / Upload / Trips), 4 view sections, FAB, floating stats card, view switching with `invalidateSize`.
 
-### 7. Current Task — Trips Tab Upgrade
-- **Trips cards**: vertical layout with mini Leaflet map preview (non-interactive) + View (opens detail overlay) + Start (opens on main map with elevation)
-- **Detail overlay**: full-screen panel with trip stats, large mini map (interactive), Start/Delete buttons
-- **Elevation profile**: canvas-based line chart at bottom of Map view, GPX `<ele>` extraction, simulated elevation for legacy trips, dot updates during simulation
-- **File**: `AGENTS.md` (this file)
+### 7. Trips Tab Upgrade (Removed in v8)
+Vertical min-map cards, full-screen detail overlay, elevation profile canvas. **Replaced in v8.**
+
+### 8. Route Tracking Redesign (Current)
+- **Removed**: GPS FAB button, standalone GPS tracking, save modal, Explore tab, simulation mode
+- **Bottom nav**: 3 tabs — Map, Upload, Trips
+- **Auto-locate**: app centers map on user location on start
+- **Trips cards**: vertical cards with mini map + View (opens detail with clickable terrain map) + Start (launches route)
+- **Detail overlay**: small non-interactive route map (tap to expand to full-screen interactive terrain map), distance/elevation gain/elevation loss/difficulty rating (Easy/Medium/Hard/Extreme)
+- **Map expand overlay**: full-screen Leaflet map with zoom/pan to examine terrain (road surfaces, vegetation)
+- **Route tracking**: Start Route → GPS autostarts, shows time/covered/remaining + elevation profile + timeline. Stop (pause), Resume, End Route.
+- **End summary**: modal showing total distance, elapsed time, pace
 
 ## Architectural Decisions
 - **No build step**: raw HTML/CSS/JS served by Flask
-- **State**: IIFE closure, `localStorage` for persistence, `currentTripId`/`currentCoords` for active trip
-- **Map**: single Leaflet instance; mini maps created/destroyed per render pass
-- **Routing**: 4 views shown/hidden via bottom nav; detail overlay is a fixed overlay outside the view system
-- **Elevation**: GPX `<ele>` converted to feet on upload; `generateElevation()` for missing data; canvas redrawn on `requestAnimationFrame` / sim tick
+- **State**: IIFE closure, `localStorage` for persistence
+- **Route tracking**: route panel has idle/active states; GPS `watchPosition` auto-started on route begin
+- **Maps**: single main Leaflet instance; mini maps (card + detail) created/destroyed per render; expand overlay has its own persistent map
+- **Difficulty**: scored from distance + elevation gain; Easy (<5), Medium (5-15), Hard (15-30), Extreme (30+)
 
 ## File Structure
 ```
@@ -43,25 +50,26 @@ Bottom nav (Map / Explore / Upload / Trips), 4 view sections, FAB, floating stat
 ├── app.py                 # Flask server
 ├── AGENTS.md              # This file
 ├── static/
-│   ├── style.css          # All styles (~1080 lines)
-│   └── script.js          # All logic (~920 lines)
+│   ├── style.css          # All styles (~860 lines)
+│   └── script.js          # All logic (~855 lines)
 └── templates/
-    └── index.html         # Single-page app shell (~210 lines)
+    └── index.html         # Single-page app shell (~194 lines)
 ```
 
 ## Key Functions (script.js)
 | Function | Purpose |
 |---|---|
 | `getTrips` / `saveTripToStorage` | CRUD for `localStorage` |
-| `renderTrips` / `renderFeed` | Render Explore + Trips views |
-| `openTrip` | Load trip on main map, show info overlay + elevation |
-| `startTrip` | `openTrip` + destroy detail map |
-| `openDetailOverlay` / `closeDetailOverlay` | Full-screen trip detail with interactive mini map |
+| `renderTrips` | Render trips feed with mini maps |
+| `openDetailOverlay` / `closeDetailOverlay` | Trip detail with small map, elevation gain/loss, difficulty |
+| `openMapExpand` / `closeMapExpand` | Full-screen interactive map for terrain inspection |
+| `startRoute` / `stopRoute` / `resumeRoute` / `endRoute` | Route tracking lifecycle |
+| `routeGpsHandler` | `watchPosition` callback updating distance, timeline, elevation dot |
+| `drawElevationProfile` | Canvas elevation chart with live position dot |
+| `calcElevationGainLoss` | Sum elevation changes from GPX/generated data |
+| `calcDifficulty` | Score-based difficulty rating |
+| `autoLocate` | Center map on user position on startup |
 | `createMiniMapForCard` / `destroyMiniMaps` | Non-interactive mini maps in trips cards |
-| `showElevationProfile` / `drawElevationProfile` | Canvas elevation chart with highlight dot |
-| `startSimulation` / `stopSimulation` / `updateSimStats` | Route simulation along current coords |
-| `startGpsTracking` / `stopGpsTracking` | Browser `watchPosition` tracking |
-| `saveGpsTrip` / `deleteTrip` | Save/delete with elevation data |
 | `generateElevation` / `ensureTripElevation` | Simulate realistic elevation for missing data |
 
 ## Running
