@@ -100,6 +100,28 @@ body {
   background: var(--green-100);
 }
 
+/* Mode indicator */
+.navbar-mode {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.mode-label {
+  color: var(--gray-400);
+  font-weight: 500;
+}
+
+.mode-value {
+  color: var(--gray-600);
+  font-weight: 600;
+}
+
 /* ─── Layout ─── */
 .layout {
   display: flex;
@@ -298,6 +320,32 @@ body {
   min-height: 0;
 }
 
+/* Save button */
+.save-btn {
+  width: 100%;
+  padding: 9px 14px;
+  margin-bottom: 24px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--white);
+  background: var(--green-600);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.save-btn:hover {
+  background: var(--green-700);
+}
+
+.save-btn:disabled {
+  background: var(--gray-300);
+  color: var(--gray-400);
+  cursor: not-allowed;
+}
+
 /* Saved section */
 .saved-section {
   margin-top: 4px;
@@ -386,6 +434,113 @@ body {
 .trip-badge.biking {
   color: #5f6b4a;
   background: #e8eedc;
+}
+
+/* Trip card active / view */
+.trip-card.active {
+  background: var(--green-100);
+  border-color: var(--green-400);
+}
+
+.trip-card-footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding-left: 8px;
+}
+
+.view-btn {
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--green-700);
+  background: var(--white);
+  border: 1px solid var(--green-400);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition);
+  white-space: nowrap;
+}
+
+.view-btn:hover {
+  background: var(--green-100);
+}
+
+/* Simulation panel */
+.sim-panel {
+  padding: 16px;
+  margin-bottom: 24px;
+  border-radius: var(--radius-md);
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+}
+
+.sim-stats {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.sim-stat {
+  flex: 1;
+  text-align: center;
+  padding: 8px 4px;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+}
+
+.sim-stat-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--gray-400);
+  margin-bottom: 2px;
+}
+
+.sim-stat-value {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gray-700);
+}
+
+.sim-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.sim-btn {
+  flex: 1;
+  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.start-btn {
+  color: var(--white);
+  background: var(--green-600);
+}
+
+.start-btn:hover {
+  background: var(--green-700);
+}
+
+.stop-btn {
+  color: var(--white);
+  background: #b34a4a;
+}
+
+.stop-btn:hover {
+  background: #973d3d;
 }
 
 /* ─── Map ─── */

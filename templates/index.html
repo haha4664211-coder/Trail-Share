@@ -32,6 +32,10 @@
       <a href="#" class="nav-link">My Trips</a>
       <a href="#" class="nav-link">About</a>
     </div>
+    <div class="navbar-mode">
+      <span class="mode-label">Mode:</span>
+      <span class="mode-value" id="mode-indicator">Idle</span>
+    </div>
   </nav>
 
   <div class="layout">
@@ -80,51 +84,32 @@
           <p class="upload-error" id="upload-error"></p>
         </div>
 
+        <button class="save-btn" id="save-trip-btn">Save Current Trip</button>
+
         <div class="saved-section">
           <h2 class="section-title">Saved Trips</h2>
+          <div id="saved-trips-list"></div>
+        </div>
 
-          <div class="trip-card" data-activity="hiking">
-            <div class="trip-thumb" style="background-color: #5a7c5f;">
-              <span class="trip-thumb-icon">&#9968;</span>
+        <div class="sim-panel" id="sim-panel" style="display:none;">
+          <h2 class="upload-title">Trip Progress</h2>
+          <div class="sim-stats">
+            <div class="sim-stat">
+              <span class="sim-stat-label">Covered</span>
+              <span class="sim-stat-value" id="sim-covered">0.0 mi</span>
             </div>
-            <div class="trip-info">
-              <h3 class="trip-title">Eagle Peak Trail</h3>
-              <span class="trip-distance">4.2 mi &middot; 1h 45m</span>
-              <span class="trip-badge hiking">Hiking</span>
+            <div class="sim-stat">
+              <span class="sim-stat-label">Remaining</span>
+              <span class="sim-stat-value" id="sim-remaining">0.0 mi</span>
+            </div>
+            <div class="sim-stat">
+              <span class="sim-stat-label">Progress</span>
+              <span class="sim-stat-value" id="sim-progress">0%</span>
             </div>
           </div>
-
-          <div class="trip-card" data-activity="biking">
-            <div class="trip-thumb" style="background-color: #7a8f6a;">
-              <span class="trip-thumb-icon">&#128690;</span>
-            </div>
-            <div class="trip-info">
-              <h3 class="trip-title">River Bend Loop</h3>
-              <span class="trip-distance">8.7 mi &middot; 45m</span>
-              <span class="trip-badge biking">Biking</span>
-            </div>
-          </div>
-
-          <div class="trip-card" data-activity="hiking">
-            <div class="trip-thumb" style="background-color: #6b7f5e;">
-              <span class="trip-thumb-icon">&#9968;</span>
-            </div>
-            <div class="trip-info">
-              <h3 class="trip-title">Pine Ridge Ascent</h3>
-              <span class="trip-distance">6.3 mi &middot; 3h 10m</span>
-              <span class="trip-badge hiking">Hiking</span>
-            </div>
-          </div>
-
-          <div class="trip-card" data-activity="biking">
-            <div class="trip-thumb" style="background-color: #6e8b72;">
-              <span class="trip-thumb-icon">&#128690;</span>
-            </div>
-            <div class="trip-info">
-              <h3 class="trip-title">Coastal View Trail</h3>
-              <span class="trip-distance">12.1 mi &middot; 1h 10m</span>
-              <span class="trip-badge biking">Biking</span>
-            </div>
+          <div class="sim-actions">
+            <button class="sim-btn start-btn" id="start-trip-btn">Start Trip</button>
+            <button class="sim-btn stop-btn" id="stop-trip-btn" style="display:none;">Stop Trip</button>
           </div>
         </div>
       </div>
