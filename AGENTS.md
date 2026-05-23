@@ -27,7 +27,12 @@ Bottom nav (Map / Explore / Upload / Trips), 4 view sections, FAB, floating stat
 ### 7. Trips Tab Upgrade (Removed in v8)
 Vertical min-map cards, full-screen detail overlay, elevation profile canvas. **Replaced in v8.**
 
-### 8. Route Tracking Redesign (Current)
+### 9. Bug Fixes (Current)
+- **Line 441 typo**: `routeTotalDist` was undefined (undeclared variable), throwing a `ReferenceError` in strict mode. This crashed `showRouteActive()`, preventing the timer, GPS tracking, and remaining distance from ever initializing. Timer not starting, stop button appearing dead, and remaining distance never updating were all caused by this single error.
+- **User location**: Empty error callbacks in geolocation API caused silent failure when GPS was denied/timed out. Added console warnings and centered the dot on the map's default location instead of [0,0] (off the coast of Africa).
+- **Cache-busting**: Added `?v=2` query parameter to `style.css` and `script.js` URLs to force browsers to load fresh files on upgrade.
+
+### 8. Route Tracking Redesign
 - **Removed**: GPS FAB button, standalone GPS tracking, save modal, Explore tab, simulation mode
 - **Bottom nav**: 3 tabs — Map, Upload, Trips
 - **Auto-locate**: app centers map on user location on start

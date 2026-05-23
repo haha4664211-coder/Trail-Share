@@ -83,8 +83,9 @@
 
   /* ─── User Location ─── */
   function startUserTracking() {
-    if (!navigator.geolocation) return;
-    userMarker = L.circleMarker([0, 0], {
+    if (!navigator.geolocation) { console.warn("Geolocation not supported."); return; }
+
+    userMarker = L.circleMarker([37.865, -119.538], {
       radius: 7, color: "#3a7bd5", fillColor: "#5a9cf5", fillOpacity: 0.8, weight: 3,
     }).addTo(map);
 
@@ -92,11 +93,15 @@
       var lat = pos.coords.latitude, lng = pos.coords.longitude;
       userMarker.setLatLng([lat, lng]);
       map.setView([lat, lng], 14);
-    }, function () {}, { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 });
+    }, function (err) {
+      console.warn("getCurrentPosition error:", err.code, err.message);
+    }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 });
 
     userWatchId = navigator.geolocation.watchPosition(function (pos) {
       userMarker.setLatLng([pos.coords.latitude, pos.coords.longitude]);
-    }, function () {}, { enableHighAccuracy: false, timeout: 30000, maximumAge: 10000 });
+    }, function (err) {
+      console.warn("watchPosition error:", err.code, err.message);
+    }, { enableHighAccuracy: false, timeout: 30000, maximumAge: 10000 });
   }
 
   /* ─── Helpers ─── */
@@ -438,7 +443,7 @@
     document.getElementById("rp-stop-btn").className = "ob-btn ob-btn-danger";
     document.getElementById("rp-time").textContent = "0:00";
     document.getElementById("rp-covered").textContent = "0.0 km";
-    document.getElementById("rp-remaining").textContent = (routeTotalDist || totalRouteDist).toFixed(1) + " km";
+    document.getElementById("rp-remaining").textContent = totalRouteDist.toFixed(1) + " km";
   }
 
   function showRoutePaused() {
