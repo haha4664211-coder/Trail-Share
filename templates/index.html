@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Trail Share</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="stylesheet" href="/static/style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -129,6 +129,10 @@
           </div>
           <div class="do-diff" id="do-diff">Easy</div>
         </div>
+        <div class="do-history" id="do-history" style="display:none;">
+          <h4 class="do-history-title">Past Routes</h4>
+          <div id="do-history-list"></div>
+        </div>
         <div class="do-actions">
           <button class="btn-primary" id="do-start">Start Route</button>
           <button class="btn-danger" id="do-delete">Delete</button>
@@ -149,9 +153,14 @@
       <div class="modal-card">
         <h3 class="modal-title">Route Complete!</h3>
         <div class="end-stats">
-          <div class="end-stat"><span class="end-val" id="end-distance">0.0 mi</span><label>Distance</label></div>
+          <div class="end-stat"><span class="end-val" id="end-distance">0.0 km</span><label>Distance</label></div>
           <div class="end-stat"><span class="end-val" id="end-time">0:00</span><label>Time</label></div>
           <div class="end-stat"><span class="end-val" id="end-pace">—</span><label>Pace</label></div>
+        </div>
+        <div class="end-stats">
+          <div class="end-stat"><span class="end-val" id="end-speed">—</span><label>Avg Speed</label></div>
+          <div class="end-stat"><span class="end-val" id="end-gain">0 m</span><label>Elev Gain</label></div>
+          <div class="end-stat"><span class="end-val" id="end-date">—</span><label>Date</label></div>
         </div>
         <div class="modal-actions">
           <button class="modal-btn modal-save" id="end-ok-btn">Done</button>
@@ -188,6 +197,6 @@
   </nav>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <script src="{{ url_for('static', filename='script.js') }}"></script>
+  <script src="/static/script.js"></script>
 </body>
 </html>

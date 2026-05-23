@@ -687,6 +687,33 @@ html, body {
 .do-diff.hard { color: #b34a4a; background: #f5d0d0; }
 .do-diff.extreme { color: #7a2a6a; background: #edd0e8; }
 
+.do-history {
+  padding: 0 16px;
+  margin: 14px 0;
+}
+.do-history-title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--gray-400);
+  margin-bottom: 8px;
+}
+.do-history-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  margin-bottom: 6px;
+  font-size: 12px;
+}
+.do-history-item .hi-date { color: var(--gray-500); min-width: 60px; }
+.do-history-item .hi-stat { flex: 1; text-align: center; font-weight: 600; color: var(--gray-700); }
+.do-history-item .hi-label { display: block; font-size: 9px; font-weight: 500; color: var(--gray-400); text-transform: uppercase; }
+
 .do-actions {
   display: flex;
   gap: 10px;

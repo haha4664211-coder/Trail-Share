@@ -101,7 +101,7 @@
 
   /* ─── Helpers ─── */
   function haversineDistance(lat1, lon1, lat2, lon2) {
-    var R = 3958.8;
+    var R = 6371;
     var dLat = ((lat2 - lat1) * Math.PI) / 180;
     var dLon = ((lon2 - lon1) * Math.PI) / 180;
     var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
@@ -226,7 +226,7 @@
         '<div class="trip-card-body">' +
         '<div class="trip-card-info">' +
         '<h3 class="trip-title">' + escapeHtml(trip.name) + '</h3>' +
-        '<span class="trip-distance">' + trip.distance.toFixed(1) + ' mi</span>' +
+        '<span class="trip-distance">' + trip.distance.toFixed(1) + ' km</span>' +
         '<span class="trip-badge ' + trip.activity + '">' + trip.activity + '</span></div>' +
         '<div class="trip-card-actions">' +
         '<button class="view-btn" data-id="' + trip.id + '">View</button>' +
@@ -297,7 +297,7 @@
     var badge = document.getElementById("do-badge");
     badge.textContent = trip.activity;
     badge.className = "badge " + trip.activity;
-    document.getElementById("do-distance").textContent = trip.distance.toFixed(1) + " mi";
+    document.getElementById("do-distance").textContent = trip.distance.toFixed(1) + " km";
     document.getElementById("do-gain").textContent = gl.gain + " m";
     document.getElementById("do-loss").textContent = gl.loss + " m";
 
@@ -308,6 +308,22 @@
 
     document.getElementById("do-start").dataset.tripId = id;
     document.getElementById("do-delete").dataset.tripId = id;
+
+    // route history
+    var histEl = document.getElementById("do-history");
+    var listEl = document.getElementById("do-history-list");
+    if (trip.routeHistory && trip.routeHistory.length > 0) {
+      histEl.style.display = "block";
+      listEl.innerHTML = trip.routeHistory.slice().reverse().map(function (r) {
+        return '<div class="do-history-item">' +
+          '<span class="hi-date">' + r.date + '</span>' +
+          '<span class="hi-stat">' + r.distance.toFixed(1) + ' km<div class="hi-label">Dist</div></span>' +
+          '<span class="hi-stat">' + r.time + '<div class="hi-label">Time</div></span>' +
+          '</div>';
+      }).join("");
+    } else {
+      histEl.style.display = "none";
+    }
 
     // small map
     var smEl = document.getElementById("do-map-sm-inner");
@@ -402,7 +418,7 @@
     var badge = document.getElementById("rp-activity");
     badge.textContent = trip.activity;
     badge.className = "ob-badge " + trip.activity;
-    document.getElementById("rp-dist").textContent = trip.distance.toFixed(1) + " mi";
+    document.getElementById("rp-dist").textContent = trip.distance.toFixed(1) + " km";
     document.getElementById("rp-ele").textContent = (trip.elevationGain || "—") + " m";
     document.getElementById("rp-diff").textContent = calcDifficulty(trip);
     document.getElementById("route-panel").style.display = "block";
@@ -421,8 +437,8 @@
     document.getElementById("rp-stop-btn").textContent = "Stop";
     document.getElementById("rp-stop-btn").className = "ob-btn ob-btn-danger";
     document.getElementById("rp-time").textContent = "0:00";
-    document.getElementById("rp-covered").textContent = "0.0 mi";
-    document.getElementById("rp-remaining").textContent = (routeTotalDist || totalRouteDist).toFixed(1) + " mi";
+    document.getElementById("rp-covered").textContent = "0.0 km";
+    document.getElementById("rp-remaining").textContent = (routeTotalDist || totalRouteDist).toFixed(1) + " km";
   }
 
   function showRoutePaused() {
@@ -454,20 +470,21 @@
     var gl = calcElevationGainLoss(trip);
     trip.elevationGain = gl.gain;
 
+    // switch to map first so panels render in visible view
+    if (currentView !== "map") switchView("map");
+
     // load route on map
     gpxLayer.clearLayers();
     var route = L.polyline(trip.points, { color: "#5a7c5f", weight: 4, opacity: 0.85 });
     gpxLayer.addLayer(route);
     map.fitBounds(route.getBounds(), { padding: [40, 40] });
 
-    // show panels
+    // show panels (map view is now visible)
     showRoutePanel(trip);
     showRouteActive();
     document.getElementById("timeline-bar").style.display = "flex";
     document.getElementById("elevation-panel").style.display = "block";
     drawElevationProfile(trip, 0);
-
-    if (currentView !== "map") switchView("map");
 
     // start GPS tracking
     routeMode = "routing";
@@ -490,11 +507,13 @@
       var min = Math.floor(sec / 60);
       sec = sec % 60;
       document.getElementById("rp-time").textContent = min + ":" + (sec < 10 ? "0" : "") + sec;
-    }, 500);
+    }, 200);
 
-    routeGpsWatchId = navigator.geolocation.watchPosition(routeGpsHandler, function () {}, {
-      enableHighAccuracy: true, timeout: 10000, maximumAge: 5000,
-    });
+    try {
+      routeGpsWatchId = navigator.geolocation.watchPosition(routeGpsHandler, function () {}, {
+        enableHighAccuracy: true, timeout: 10000, maximumAge: 5000,
+      });
+    } catch (e) {}
   }
 
   function routeGpsHandler(pos) {
@@ -515,14 +534,14 @@
     }
 
     var remaining = Math.max(0, totalRouteDist - routeCurrentDist);
-    document.getElementById("rp-covered").textContent = routeCurrentDist.toFixed(1) + " mi";
-    document.getElementById("rp-remaining").textContent = remaining.toFixed(1) + " mi";
+    document.getElementById("rp-covered").textContent = routeCurrentDist.toFixed(1) + " km";
+    document.getElementById("rp-remaining").textContent = remaining.toFixed(1) + " km";
 
     var pct = totalRouteDist > 0 ? Math.min(100, (routeCurrentDist / totalRouteDist) * 100) : 0;
     document.getElementById("timeline-fill").style.width = pct + "%";
     document.getElementById("timeline-progress").textContent = Math.round(pct) + "%";
     document.getElementById("timeline-distance").textContent =
-      routeCurrentDist.toFixed(1) + " mi / " + totalRouteDist.toFixed(1) + " mi";
+      routeCurrentDist.toFixed(1) + " km / " + totalRouteDist.toFixed(1) + " km";
 
     // update elevation dot to closest point on route
     var closestIdx = findClosestRouteIndex(lat, lng, currentCoords);
@@ -553,10 +572,33 @@
       updateMode();
       routeStartTime = Date.now() - routeElapsed;
       showRouteActive();
-      routeGpsWatchId = navigator.geolocation.watchPosition(routeGpsHandler, function () {}, {
-        enableHighAccuracy: true, timeout: 10000, maximumAge: 5000,
-      });
+      try {
+        routeGpsWatchId = navigator.geolocation.watchPosition(routeGpsHandler, function () {}, {
+          enableHighAccuracy: true, timeout: 10000, maximumAge: 5000,
+        });
+      } catch (e) {}
     }
+  }
+
+  function saveRouteResult(id, dist, elapsed) {
+    if (!id) return;
+    var trips = getTrips();
+    for (var i = 0; i < trips.length; i++) {
+      if (trips[i].id === id) {
+        if (!trips[i].routeHistory) trips[i].routeHistory = [];
+        var sec = Math.floor(elapsed / 1000);
+        var min = Math.floor(sec / 60);
+        sec = sec % 60;
+        trips[i].routeHistory.push({
+          distance: dist,
+          time: min + ":" + (sec < 10 ? "0" : "") + sec,
+          elapsed: elapsed,
+          date: new Date().toISOString().split("T")[0],
+        });
+        break;
+      }
+    }
+    localStorage.setItem("trailshare_trips", JSON.stringify(trips));
   }
 
   function endRoute() {
@@ -564,18 +606,23 @@
     if (routeGpsWatchId) { navigator.geolocation.clearWatch(routeGpsWatchId); routeGpsWatchId = null; }
     if (routeGpsLayer) { map.removeLayer(routeGpsLayer); routeGpsLayer = null; }
 
-    document.getElementById("rp-covered").textContent = routeCurrentDist.toFixed(1) + " mi";
-
     var sec = Math.floor(routeElapsed / 1000);
     var min = Math.floor(sec / 60);
     sec = sec % 60;
     var timeStr = min + ":" + (sec < 10 ? "0" : "") + sec;
 
-    var pace = routeCurrentDist > 0 ? (routeElapsed / 1000 / 60 / routeCurrentDist).toFixed(1) + " min/mi" : "—";
+    var pace = routeCurrentDist > 0 ? (routeElapsed / 1000 / 60 / routeCurrentDist).toFixed(1) + " min/km" : "—";
+    var avgSpeed = routeCurrentDist > 0 ? (routeCurrentDist / (routeElapsed / 1000 / 3600)).toFixed(1) + " km/h" : "—";
 
-    document.getElementById("end-distance").textContent = routeCurrentDist.toFixed(1) + " mi";
+    saveRouteResult(routeTripId, routeCurrentDist, routeElapsed);
+
+    document.getElementById("end-distance").textContent = routeCurrentDist.toFixed(1) + " km";
     document.getElementById("end-time").textContent = timeStr;
     document.getElementById("end-pace").textContent = pace;
+    document.getElementById("end-speed").textContent = avgSpeed;
+    var trip = findTrip(routeTripId);
+    document.getElementById("end-gain").textContent = (trip ? (trip.elevationGain || 0) : 0) + " m";
+    document.getElementById("end-date").textContent = new Date().toLocaleDateString();
     document.getElementById("end-modal").style.display = "flex";
 
     routeMode = "idle";
@@ -595,6 +642,7 @@
   function endRouteDone() {
     document.getElementById("end-modal").style.display = "none";
     gpxLayer.clearLayers();
+    renderTrips();
     map.fitBounds(routeLine.getBounds(), { padding: [40, 40] });
   }
 
@@ -681,7 +729,7 @@
 
       document.getElementById("ep-elevation").textContent = data[highlightIndex] + " m";
       document.getElementById("ep-dist").textContent =
-        cumulativeDist[highlightIndex].toFixed(1) + " mi / " + totalDist.toFixed(1) + " mi";
+        cumulativeDist[highlightIndex].toFixed(1) + " km / " + totalDist.toFixed(1) + " km";
     }
   }
 
