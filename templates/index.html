@@ -78,6 +78,18 @@
 
       <button class="fab" id="fab-btn">Start GPS Tracking</button>
       <button class="fab fab-stop" id="fab-stop" style="display:none;">Stop</button>
+
+      <div class="elevation-panel" id="elevation-panel" style="display:none;">
+        <div class="ep-header">
+          <span class="ep-title">Route Profile</span>
+          <button class="ep-close" id="ep-close">&times;</button>
+        </div>
+        <canvas class="ep-canvas" id="ep-canvas"></canvas>
+        <div class="ep-info">
+          <span id="ep-elevation">0 ft</span>
+          <span id="ep-dist">0.0 mi</span>
+        </div>
+      </div>
     </section>
 
     <!-- ─── Explore View ─── -->
@@ -118,6 +130,29 @@
         <button class="save-btn" id="save-trip-btn">Save Current Trip</button>
       </div>
     </section>
+
+    <!-- Trip Detail Overlay -->
+    <div class="detail-overlay hidden" id="detail-overlay">
+      <div class="do-scroll">
+        <div class="do-header">
+          <button class="do-back" id="do-back">&larr; Back</button>
+          <div class="do-header-text">
+            <h2 id="do-title"></h2>
+            <span class="badge" id="do-badge"></span>
+          </div>
+        </div>
+        <div class="do-stats">
+          <div class="do-stat"><span class="do-val" id="do-distance">0</span><label>Distance</label></div>
+          <div class="do-stat"><span class="do-val" id="do-duration">0m</span><label>Duration</label></div>
+          <div class="do-stat"><span class="do-val" id="do-speed">0</span><label>Speed</label></div>
+        </div>
+        <div class="do-map-wrap"><div id="do-map" class="do-map"></div></div>
+        <div class="do-actions">
+          <button class="btn-primary" id="do-start">Start This Trip</button>
+          <button class="btn-danger" id="do-delete">Delete Trip</button>
+        </div>
+      </div>
+    </div>
 
     <!-- ─── Trips View ─── -->
     <section id="view-trips" class="view">
