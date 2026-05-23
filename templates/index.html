@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trail Share</title>
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <svg class="navbar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+        <polyline points="9 22 9 12 15 12 15 22" />
+      </svg>
+      <span>Trail Share</span>
+    </div>
+    <div class="navbar-links">
+      <a href="#" class="nav-link active">Discover</a>
+      <a href="#" class="nav-link">My Trips</a>
+      <a href="#" class="nav-link">About</a>
+    </div>
+  </nav>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-content">
+        <div class="search-wrapper">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input type="text" class="search-input" placeholder="Search trails..." />
+        </div>
+
+        <div class="filter-group">
+          <button class="filter-btn active" data-filter="hiking">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M13 17l3-3" />
+              <path d="M6 22l3-8" />
+              <path d="M10 13l4-4 3 3-4 4" />
+              <path d="M13 8l2-2" />
+              <path d="M17 6l2-2" />
+            </svg>
+            Hiking
+          </button>
+          <button class="filter-btn" data-filter="biking">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="5.5" cy="17.5" r="3.5" />
+              <circle cx="18.5" cy="17.5" r="3.5" />
+              <polyline points="15 10 11 10 9 14 15 14 18 10 15 10" />
+              <path d="M15 14l-3 5" />
+              <circle cx="8" cy="6" r="1" />
+            </svg>
+            Biking
+          </button>
+        </div>
+
+        <div class="upload-box">
+          <h2 class="upload-title">Upload GPX</h2>
+          <div class="upload-input-row">
+            <input type="file" id="gpx-input" accept=".gpx" class="upload-input" />
+            <label for="gpx-input" class="upload-label">Choose file</label>
+            <span class="upload-filename" id="gpx-filename">No file chosen</span>
+          </div>
+          <button class="upload-btn" id="load-preview-btn">Load Preview</button>
+          <p class="upload-hint">Upload a GPX file to preview your route on the map</p>
+          <p class="upload-error" id="upload-error"></p>
+        </div>
+
+        <div class="saved-section">
+          <h2 class="section-title">Saved Trips</h2>
+
+          <div class="trip-card" data-activity="hiking">
+            <div class="trip-thumb" style="background-color: #5a7c5f;">
+              <span class="trip-thumb-icon">&#9968;</span>
+            </div>
+            <div class="trip-info">
+              <h3 class="trip-title">Eagle Peak Trail</h3>
+              <span class="trip-distance">4.2 mi &middot; 1h 45m</span>
+              <span class="trip-badge hiking">Hiking</span>
+            </div>
+          </div>
+
+          <div class="trip-card" data-activity="biking">
+            <div class="trip-thumb" style="background-color: #7a8f6a;">
+              <span class="trip-thumb-icon">&#128690;</span>
+            </div>
+            <div class="trip-info">
+              <h3 class="trip-title">River Bend Loop</h3>
+              <span class="trip-distance">8.7 mi &middot; 45m</span>
+              <span class="trip-badge biking">Biking</span>
+            </div>
+          </div>
+
+          <div class="trip-card" data-activity="hiking">
+            <div class="trip-thumb" style="background-color: #6b7f5e;">
+              <span class="trip-thumb-icon">&#9968;</span>
+            </div>
+            <div class="trip-info">
+              <h3 class="trip-title">Pine Ridge Ascent</h3>
+              <span class="trip-distance">6.3 mi &middot; 3h 10m</span>
+              <span class="trip-badge hiking">Hiking</span>
+            </div>
+          </div>
+
+          <div class="trip-card" data-activity="biking">
+            <div class="trip-thumb" style="background-color: #6e8b72;">
+              <span class="trip-thumb-icon">&#128690;</span>
+            </div>
+            <div class="trip-info">
+              <h3 class="trip-title">Coastal View Trail</h3>
+              <span class="trip-distance">12.1 mi &middot; 1h 10m</span>
+              <span class="trip-badge biking">Biking</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="map-container" id="map"></main>
+  </div>
+
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
