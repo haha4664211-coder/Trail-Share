@@ -85,23 +85,34 @@
   function startUserTracking() {
     if (!navigator.geolocation) { console.warn("Geolocation not supported."); return; }
 
-    userMarker = L.circleMarker([37.865, -119.538], {
-      radius: 7, color: "#3a7bd5", fillColor: "#5a9cf5", fillOpacity: 0.8, weight: 3,
+    // visible dot at map center until GPS fixes
+    var center = map.getCenter();
+    userMarker = L.circleMarker([center.lat, center.lng], {
+      radius: 9, color: "#2563eb", fillColor: "#60a5fa", fillOpacity: 0.9, weight: 3,
     }).addTo(map);
 
-    navigator.geolocation.getCurrentPosition(function (pos) {
-      var lat = pos.coords.latitude, lng = pos.coords.longitude;
-      userMarker.setLatLng([lat, lng]);
-      map.setView([lat, lng], 14);
-    }, function (err) {
-      console.warn("getCurrentPosition error:", err.code, err.message);
-    }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 });
+    // wrap in try-catch because some browsers throw on HTTP
+    try {
+      navigator.geolocation.getCurrentPosition(function (pos) {
+        var lat = pos.coords.latitude, lng = pos.coords.longitude;
+        userMarker.setLatLng([lat, lng]);
+        map.setView([lat, lng], 14);
+      }, function (err) {
+        console.warn("getCurrentPosition error:", err.code, err.message);
+      }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 120000 });
+    } catch (e) {
+      console.warn("getCurrentPosition threw:", e);
+    }
 
-    userWatchId = navigator.geolocation.watchPosition(function (pos) {
-      userMarker.setLatLng([pos.coords.latitude, pos.coords.longitude]);
-    }, function (err) {
-      console.warn("watchPosition error:", err.code, err.message);
-    }, { enableHighAccuracy: false, timeout: 30000, maximumAge: 10000 });
+    try {
+      userWatchId = navigator.geolocation.watchPosition(function (pos) {
+        userMarker.setLatLng([pos.coords.latitude, pos.coords.longitude]);
+      }, function (err) {
+        console.warn("watchPosition error:", err.code, err.message);
+      }, { enableHighAccuracy: false, timeout: 30000, maximumAge: 10000 });
+    } catch (e) {
+      console.warn("watchPosition threw:", e);
+    }
   }
 
   /* ─── Helpers ─── */
@@ -498,9 +509,10 @@
     gpxLayer.addLayer(route);
     map.fitBounds(route.getBounds(), { padding: [40, 40] });
 
-    // gps tracking layer
+    // gps tracking layer — put marker at trip start so it's visible immediately
+    var startPos = trip.points[0] || [0, 0];
     routeGpsLayer = L.featureGroup().addTo(map);
-    routeGpsMarker = L.circleMarker([0, 0], {
+    routeGpsMarker = L.circleMarker(startPos, {
       radius: 8, color: "#3d5a3e", fillColor: "#5a7c5f", fillOpacity: 0.9, weight: 3,
     }).addTo(routeGpsLayer);
     routeGpsPolyline = L.polyline([], { color: "#4a7bb5", weight: 4, opacity: 0.85 })
@@ -518,10 +530,14 @@
     }, 200);
 
     try {
-      routeGpsWatchId = navigator.geolocation.watchPosition(routeGpsHandler, function () {}, {
+      routeGpsWatchId = navigator.geolocation.watchPosition(routeGpsHandler, function (err) {
+        console.warn("Route GPS watchPosition error:", err.code, err.message);
+      }, {
         enableHighAccuracy: true, timeout: 10000, maximumAge: 5000,
       });
-    } catch (e) {}
+    } catch (e) {
+      console.warn("GPS watchPosition threw:", e);
+    }
   }
 
   function routeGpsHandler(pos) {

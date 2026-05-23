@@ -31,6 +31,9 @@ Vertical min-map cards, full-screen detail overlay, elevation profile canvas. **
 - **Line 441 typo**: `routeTotalDist` was undefined (undeclared variable), throwing a `ReferenceError` in strict mode. This crashed `showRouteActive()`, preventing the timer, GPS tracking, and remaining distance from ever initializing. Timer not starting, stop button appearing dead, and remaining distance never updating were all caused by this single error.
 - **User location**: Empty error callbacks in geolocation API caused silent failure when GPS was denied/timed out. Added console warnings and centered the dot on the map's default location instead of [0,0] (off the coast of Africa).
 - **Cache-busting**: Added `?v=2` query parameter to `style.css` and `script.js` URLs to force browsers to load fresh files on upgrade.
+- **GPS marker at [0,0]**: Route GPS marker was initialized at [0,0] (invisible). Now starts at the trip's first coordinate.
+- **Route GPS error callbacks**: GPS `watchPosition` inside `startRoute` also had empty error handler. Added console warnings.
+- **try-catch around geolocation**: Some browsers throw on HTTP. Wrapped all geolocation calls in try-catch.
 
 ### 8. Route Tracking Redesign
 - **Removed**: GPS FAB button, standalone GPS tracking, save modal, Explore tab, simulation mode
